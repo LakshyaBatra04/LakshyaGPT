@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: ankane/pgvector
+    container_name: postgres_pgvector
+    environment:
+      POSTGRES_USER: ai
+      POSTGRES_PASSWORD: ai
+      POSTGRES_DB: ai
+    ports:
+      - "5532:5432"
+    restart: always

@@ -1,0 +1,10 @@
+agno
+numpy
+pandas
+groq
+huggingface_hub
+sqlalchemy 'psycopg[binary]' 
+pgvector
+pypdf
+agno
+duckduckgo-search
