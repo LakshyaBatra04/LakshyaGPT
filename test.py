@@ -1,31 +1,32 @@
-def main():
-    from agno.agent import Agent  # Move inside function
-    from agno.models.ollama import Ollama
-    from agno.embedder.ollama import OllamaEmbedder
-    from agno.knowledge.pdf import PDFKnowledgeBase
-    from agno.vectordb.pgvector import PgVector
+from transformers import pipeline
+import torch
+print("eee")
+pipe = pipeline(
+    "image-text-to-text",
+    model="google/gemma-3-4b-it",
+    device="cuda",
+    torch_dtype=torch.bfloat16,
+    cache_dir="D:/huggingface_cache"  # Change this to your preferred directory
+)
+print("fucky")
 
-    db_url = "postgresql+psycopg://ai:ai@localhost:5532/ai"
-    embeddings = OllamaEmbedder(id="deepseek-r1:1.5b")
+messages = [
+    {
+        "role": "system",
+        "content": [{"type": "text", "text": "You are a helpful assistant."}]
+    },
+    {
+        "role": "user",
+        "content": [
+            {"type": "image", "url": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG"},
+            {"type": "text", "text": "What animal is on the candy?"}
+        ]
+    }
+]
 
-    knowledge_base = PDFKnowledgeBase(
-        path=r"D:\3rd Year 2nd Semester\HUL352\test",
-        vector_db=PgVector(
-            table_name="pdf_documents",
-            db_url=db_url,
-            embedder=embeddings
-        ),
-    )
-    knowledge_base.load(recreate=False)
+output = pipe(text=messages)
+print(output[0][0]["generated_text"][-1]["content"]+"1") 
 
-    agent = Agent(
-        model=Ollama(id="mistral"),
-        description="You are an AI agent at CoreShield Technologies, you answer queries",
-        show_tool_calls=True,
-        markdown=True
-    )
-
-    agent.print_response("What is sankhya philosophy?", stream=True)
-
-if __name__ == "__main__":
-    main()
+# Okay, let's take a look! 
+# Based on the image, the animal on the candy is a **turtle**. 
+# You can see the shell shape and the head and legs.
