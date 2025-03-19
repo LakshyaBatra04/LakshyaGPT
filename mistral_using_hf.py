@@ -1,13 +1,7 @@
-import ollama
-from ollama import chat
-from ollama import ChatResponse
-import bs4
-from langchain import hub
-from langchain_community.document_loaders import WebBaseLoader
-from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+import requests
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
+from huggingface_hub import InferenceClient
 
 model_name = "sentence-transformers/all-mpnet-base-v2"
 model_kwargs = {'device': 'cpu'}
@@ -26,11 +20,19 @@ context= ""
 for doc in docs:
     context+='\n'
     context = context+' ' + doc.page_content
-  
-response: ChatResponse = chat(model='mistral', messages=[
-  {
-    'role': 'user',
-    'content': query ,
-  },
-])
-print(response['message']['content'])
+
+
+import requests
+
+API_URL = "https://router.huggingface.co/hf-inference/v1"
+headers = {"Authorization": "Bearer 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"}
+
+def query(payload):
+	response = requests.post(API_URL, headers=headers, json=payload)
+	return response.json()
+	
+output = query({
+	"inputs": "Can you please let us know more details about your ",
+})
+
+print(output)
